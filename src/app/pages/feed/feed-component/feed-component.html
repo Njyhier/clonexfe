@@ -1,0 +1,54 @@
+<div id="conta" class="flex items-center flex-col">
+  @for (post of posts(); track post.id) {
+    <div class="post max-w-[350px] mb-5 border rounded-3xl p-2">
+      <div class="auth flex items-center">
+        <div class="w-10 h-10">
+          <img [src]="post.mediaUrl" alt="" class="w-10 h-10 rounded-full" />
+        </div>
+        <h1>{{ post?.user?.username }}</h1>
+        <p>@user123</p>
+      </div>
+
+      <div>
+        <p>
+          {{ post.caption }}
+        </p>
+        <img [src]="post.mediaUrl" alt="" class="" />
+      </div>
+      <div class="interactions flex mt-3 gap-3">
+        <p>
+          likes <span class="font-bold">{{ post.likes?.length ?? 0 }}</span>
+        </p>
+        <p>
+          Comments <span class="font-bold">{{ post.comments?.length ?? 0 }}</span>
+        </p>
+      </div>
+      @if (post.id == activeId) {
+        <div [ngClass]="{ hidden: textareaHidden }">
+          <form action="">
+            <div class="relative">
+              <textarea
+                name="comment"
+                placeholder="comment..."
+                class="border w-full rounded-2xl p-3"
+                [formControl]="comment"
+              ></textarea>
+              <button class="absolute bottom-3 right-2">Comment</button>
+            </div>
+          </form>
+        </div>
+      }
+      <div class="buttons flex">
+        <ol class="flex items-center justify-around mt-3 w-full">
+          <li><i class="fa-regular fa-comment" (click)="goToPost(post?.id ?? '')"></i></li>
+          <li><i class="fa-solid fa-retweet"></i></li>
+          <li (click)="getPostById(post.id ?? '')">
+            <i class="fa-regular fa-heart"></i>
+          </li>
+          <li><i class="fa-regular fa-bookmark"></i></li>
+          <li><i class="fa-solid fa-upload"></i></li>
+        </ol>
+      </div>
+    </div>
+  }
+</div>

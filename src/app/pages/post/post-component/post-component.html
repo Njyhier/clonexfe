@@ -1,0 +1,69 @@
+<div id="container" class="flex justify-center">
+  <div class="post max-w-[350px] mb-5 border rounded-3xl p-2">
+    <div class="auth flex items-center">
+      <div class="w-10 h-10">
+        <img [src]="requestedPost().mediaUrl" alt="" class="w-10 h-10 rounded-full" />
+      </div>
+      <h1>{{ requestedPost().user?.username ?? '' }}</h1>
+      <p>@user123</p>
+    </div>
+
+    <div>
+      <p>
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deserunt perspiciatis eum dolorem
+        a
+      </p>
+      <img [src]="requestedPost().mediaUrl" alt="" class="" />
+    </div>
+    <div class="interactions flex mt-3 gap-3">
+      <p>
+        likes <span class="font-bold">{{ requestedPost().likes?.length ?? 0 }}</span>
+      </p>
+      <p>
+        Comments <span class="font-bold">{{ requestedPost().comments?.length ?? 0 }}</span>
+      </p>
+    </div>
+
+    <div>
+      <form action="">
+        <div class="relative">
+          <textarea
+            name="comment"
+            placeholder="comment..."
+            class="border w-full rounded-2xl p-3"
+            [formControl]="comment"
+          ></textarea>
+          <button class="absolute bottom-3 right-2" (click)="creatComment()">Comment</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="buttons flex">
+      <ol class="flex items-center justify-around mt-3 w-full">
+        <li><i class="fa-regular fa-comment"></i></li>
+        <li><i class="fa-solid fa-retweet"></i></li>
+        <li>
+          <i (click)="createLike()" class="fa-regular fa-heart"></i>
+        </li>
+        <li><i class="fa-regular fa-bookmark"></i></li>
+        <li><i class="fa-solid fa-upload"></i></li>
+      </ol>
+    </div>
+    <div class="comments border p-2 rounded-md">
+      @for (c of requestedPost().comments; track c.id) {
+        <div class="comment flex flex-col p-1 border rounded-lg my-1">
+          <div class="auth flex items-center">
+            <div class="w-10 h-10">
+              <img [src]="requestedPost().mediaUrl" alt="" class="w-10 h-10 rounded-full" />
+            </div>
+            <h1>{{ requestedPost().user?.username ?? '' }}</h1>
+            <p>@user123</p>
+          </div>
+          <div>
+            <p>{{ c.text }}</p>
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
