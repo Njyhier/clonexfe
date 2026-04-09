@@ -2,7 +2,7 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import { PostService } from '../../../services/posts/post-service';
 import { Ipost } from '../../../interfaces/ipost';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommentService } from '../../../services/comments/comment-service';
 import { Router } from '@angular/router';
 
@@ -20,6 +20,10 @@ export class FeedComponent implements OnInit {
   commentService = inject(CommentService);
   private postService = inject(PostService);
   router = inject(Router);
+
+  postForm = new FormGroup({
+    caption: new FormControl(''),
+  });
 
   comment = new FormControl<string>('');
 

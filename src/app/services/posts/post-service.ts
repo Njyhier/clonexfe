@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Ipost } from '../../interfaces/ipost';
 import { IApiResponce } from '../../interfaces/iapi-responce';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,10 @@ export class PostService {
   private http = inject(HttpClient);
 
   getPosts(): Observable<IApiResponce<Ipost[]>> {
-    return this.http.get<IApiResponce<Ipost[]>>('http://localhost:3000/posts/readposts');
+    return this.http.get<IApiResponce<Ipost[]>>(`${environment.CORE_URL}/posts/readposts`);
   }
 
   getPostById(postId: string): Observable<IApiResponce<Ipost>> {
-    return this.http.get<IApiResponce<Ipost>>(`http://localhost:3000/posts/${postId}`);
+    return this.http.get<IApiResponce<Ipost>>(`${environment.CORE_URL}/${postId}`);
   }
 }
