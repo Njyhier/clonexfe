@@ -2,9 +2,9 @@
   <div class="post max-w-[350px] mb-5 border rounded-3xl p-2">
     <div class="auth flex items-center">
       <div class="w-10 h-10">
-        <img [src]="requestedPost().mediaUrl" alt="" class="w-10 h-10 rounded-full" />
+        <img [src]="requestedPost().mediaurl" alt="" class="w-10 h-10 rounded-full" />
       </div>
-      <h1>{{ requestedPost().user?.username ?? '' }}</h1>
+      <h1>{{ requestedPost().cxUser?.username ?? '' }}</h1>
       <p>@user123</p>
     </div>
 
@@ -13,14 +13,14 @@
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Deserunt perspiciatis eum dolorem
         a
       </p>
-      <img [src]="requestedPost().mediaUrl" alt="" class="" />
+      <img [src]="requestedPost().mediaurl" alt="" class="" />
     </div>
     <div class="interactions flex mt-3 gap-3">
       <p>
-        likes <span class="font-bold">{{ requestedPost().likes?.length ?? 0 }}</span>
+        likes <span class="font-bold">{{ requestedPost().cxLikes?.length ?? 0 }}</span>
       </p>
       <p>
-        Comments <span class="font-bold">{{ requestedPost().comments?.length ?? 0 }}</span>
+        Comments <span class="font-bold">{{ requestedPost().cxComments?.length ?? 0 }}</span>
       </p>
     </div>
 
@@ -50,13 +50,13 @@
       </ol>
     </div>
     <div class="comments border p-2 rounded-md">
-      @for (c of requestedPost().comments; track c.id) {
+      @for (c of requestedPost().cxComments; track c.id) {
         <div class="comment flex flex-col p-1 border rounded-lg my-1">
           <div class="auth flex items-center">
             <div class="w-10 h-10">
-              <img [src]="requestedPost().mediaUrl" alt="" class="w-10 h-10 rounded-full" />
+              <img [src]="requestedPost().mediaurl" alt="" class="w-10 h-10 rounded-full" />
             </div>
-            <h1>{{ requestedPost().user?.username ?? '' }}</h1>
+            <h1>{{ requestedPost().cxUser?.username ?? '' }}</h1>
             <p>@user123</p>
           </div>
           <div>

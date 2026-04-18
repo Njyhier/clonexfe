@@ -7,9 +7,9 @@
     <div class="post max-w-[350px] mb-5 border rounded-3xl p-2">
       <div class="auth flex items-center">
         <div class="w-10 h-10">
-          <img [src]="post.mediaUrl" alt="" class="w-10 h-10 rounded-full" />
+          <img [src]="post.mediaurl" alt="" class="w-10 h-10 rounded-full" />
         </div>
-        <h1>{{ post?.user?.username }}</h1>
+        <h1>{{ post?.cxUser?.username }}</h1>
         <p>@user123</p>
       </div>
 
@@ -17,14 +17,14 @@
         <p>
           {{ post.caption }}
         </p>
-        <img [src]="post.mediaUrl" alt="" class="" />
+        <img [src]="post.mediaurl" alt="" class="" />
       </div>
       <div class="interactions flex mt-3 gap-3">
         <p>
-          likes <span class="font-bold">{{ post.likes?.length ?? 0 }}</span>
+          cxLikes <span class="font-bold">{{ post.cxLikes?.length ?? 0 }}</span>
         </p>
         <p>
-          Comments <span class="font-bold">{{ post.comments?.length ?? 0 }}</span>
+          Comments <span class="font-bold">{{ post.cxComments?.length ?? 0 }}</span>
         </p>
       </div>
       @if (post.id == activeId) {

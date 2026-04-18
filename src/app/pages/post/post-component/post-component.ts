@@ -30,6 +30,9 @@ export class PostComponent implements OnInit {
         console.log(res);
         this.requestedPost.set(res?.payload ?? {});
       },
+      error: e=>{
+        console.error('Error fetching post', e)
+      }
     });
   }
   creatComment() {
@@ -37,7 +40,7 @@ export class PostComponent implements OnInit {
     return this.commentService
       .createComment(
         { text: comment },
-        { postId: this.requestedPost()?.id ?? '', userId: this.requestedPost()?.user?.id ?? '' },
+        { postId: this.requestedPost()?.id ?? '', userId: this.requestedPost()?.cxUser?.id ?? '' },
       )
       .subscribe({
         next: (res) => console.log(res),
@@ -47,7 +50,7 @@ export class PostComponent implements OnInit {
 
   createLike() {
     const postId = this.requestedPost()?.id ?? '';
-    const userId = this.requestedPost()?.user?.id ?? '';
+    const userId = this.requestedPost()?.cxUser?.id ?? '';
     const body = {
       postId: postId,
       userId: userId,

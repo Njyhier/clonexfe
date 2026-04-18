@@ -4,10 +4,10 @@ import { Iuser } from './iuser';
 
 export interface Ipost {
   id?: string;
-  mediaUrl?: string;
+  mediaurl?: string;
   caption?: string;
-  comments?: Icomment[];
-  likes?: ILike[];
-  user?: Iuser;
+  cxComments?: Icomment[];
+  cxLikes?: ILike[];
+  cxUser?: Iuser;
   createdAt?: Date;
 }
