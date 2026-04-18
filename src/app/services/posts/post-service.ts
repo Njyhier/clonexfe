@@ -16,6 +16,9 @@ export class PostService {
   }
 
   getPostById(postId: string): Observable<IApiResponce<Ipost>> {
-    return this.http.get<IApiResponce<Ipost>>(`${environment.CORE_URL}/${postId}`);
+    return this.http.get<IApiResponce<Ipost>>(`${environment.CORE_URL}/posts/${postId}`);
+  }
+  createPost(){
+    this.http.post(`${environment.CORE_URL}/posts/createposts`, {})
   }
 }

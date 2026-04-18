@@ -38,6 +38,7 @@ export class FeedComponent implements OnInit {
   }
 
   displayFeed() {
+    console.log("getting feed")
     return this.postService.getPosts().subscribe({
       next: (res) => {
         console.log(res);
