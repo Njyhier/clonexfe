@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Icomment } from '../../interfaces/icomment';
 import { IApiResponce } from '../../interfaces/iapi-responce';
 import { Observable } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -13,8 +14,10 @@ export class CommentService {
     body: Icomment,
     params: { userId: string; postId: string },
   ): Observable<IApiResponce<Icomment>> {
+        console.log("Creating comment",params.postId, params.userId)
+
     return this.http.post<IApiResponce<Icomment>>(
-      `http://localhost:3000/comments/createcomment/${params.postId}/${params.userId}`,
+      `${environment.CORE_URL}/${params.postId}/${params.userId}`,
       body,
     );
   }

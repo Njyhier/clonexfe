@@ -21,6 +21,7 @@ export class PostComponent implements OnInit {
   private activatedRoute = inject(ActivatedRoute);
 
   comment = new FormControl<string>('');
+  
   getPostById() {
     let postId = '';
     this.activatedRoute.params.subscribe((params) => (postId = params['id']));
@@ -36,6 +37,7 @@ export class PostComponent implements OnInit {
     });
   }
   creatComment() {
+    console.log("Creating comment")
     const comment = this.comment?.value ?? '';
     return this.commentService
       .createComment(
@@ -43,9 +45,11 @@ export class PostComponent implements OnInit {
         { postId: this.requestedPost()?.id ?? '', userId: this.requestedPost()?.cxUser?.id ?? '' },
       )
       .subscribe({
+        
         next: (res) => console.log(res),
         error: (e) => console.log('Error', e),
       });
+      
   }
 
   createLike() {
