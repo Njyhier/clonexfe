@@ -51,7 +51,7 @@ export class FeedComponent implements OnInit {
           mediaUrl: imageUrl(),
         };
         console.log('DATA', data);
-        return this.postService.createPost('cmo4fn8u5000028csg944hq4z', data).subscribe({
+        return this.postService.createPost('cmtwrup870000lrmcaa7syh67', data).subscribe({
           next: (res) => {
             alert('Post Created!');
             console.log('createdPost', res);
