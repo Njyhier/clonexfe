@@ -1,0 +1,37 @@
+.post-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+
+  padding: 12px 4px;
+
+  border: 0;
+
+  background: transparent;
+
+  color: #64748b;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.post-action:hover {
+  color: #4f46e5;
+  background: #f8fafc;
+}
+
+.post-action i {
+  font-size: 16px;
+}
+
+.like-action:hover {
+  color: #ef4444;
+}

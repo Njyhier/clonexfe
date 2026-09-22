@@ -1,4 +1,4 @@
-<div id="conta" class="flex items-center flex-col bg-black">
+<!-- <div id="conta" class="flex items-center flex-col bg-black">
   <div class="w-[350px] h-24 mt-2 overflow-hidden mb-1 border rounded-3xl p-2 relative">
     <form [formGroup]="postForm" (ngSubmit)="registerPost()">
 
@@ -59,4 +59,218 @@
       </div>
     </div>
   }
+</div> -->
+
+<div class="feed-page">
+  <div class="feed-container">
+    <!-- =========================================================
+         HEADER
+         ========================================================= -->
+
+    <header class="feed-header">
+      <div>
+        <p class="eyebrow">COMMUNITY</p>
+
+        <h1>Your Feed</h1>
+
+        <p class="feed-subtitle">Discover what people are sharing today.</p>
+      </div>
+
+      <button type="button" class="refresh-btn" (click)="displayFeed()">
+        <span>↻</span>
+        Refresh
+      </button>
+    </header>
+
+    <!-- =========================================================
+         CREATE POST
+         ========================================================= -->
+
+    <section class="create-post-card">
+      <div class="create-post-top">
+        <div class="avatar avatar-primary">NN</div>
+
+        <div class="create-post-placeholder">Share something with the community...</div>
+      </div>
+
+      <form [formGroup]="postForm" (ngSubmit)="registerPost()" class="post-form">
+        <textarea
+          formControlName="caption"
+          rows="3"
+          placeholder="What's on your mind?"
+          class="caption-input"
+        ></textarea>
+
+        <div class="post-form-footer">
+          <label class="upload-button">
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+
+            <span class="upload-icon"> + </span>
+
+            <span> Add photo </span>
+          </label>
+
+          <button type="submit" class="publish-btn">
+            Publish Post
+            <span>→</span>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <!-- =========================================================
+         POSTS
+         ========================================================= -->
+
+    <main class="feed-list">
+      @for (post of posts(); track post.id) {
+        <article class="post-card">
+          <!-- ===================================================
+               POST HEADER
+               =================================================== -->
+
+          <div class="post-header">
+            <div class="post-author">
+              <div class="avatar avatar-random">
+                {{ post.cxUser?.username?.slice(0, 2)?.toUpperCase() || 'US' }}
+              </div>
+
+              <div class="author-info">
+                <h3>
+                  {{ post.cxUser?.username || 'Community Member' }}
+                </h3>
+
+                <div class="post-meta">
+                  <span>
+                    {{ post.createdAt ? (post.createdAt | date: 'MMM d, y') : 'Recently' }}
+                  </span>
+
+                  <span class="dot"> • </span>
+
+                  <span> Public </span>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="more-btn" aria-label="More options">⋯</button>
+          </div>
+
+          <!-- ===================================================
+               CAPTION
+               =================================================== -->
+
+          @if (post.caption) {
+            <div class="post-content">
+              <p>
+                {{ post.caption }}
+              </p>
+            </div>
+          }
+
+          <!-- ===================================================
+               IMAGE
+               =================================================== -->
+
+          @if (post.mediaurl) {
+            <div class="post-image-wrapper" (click)="goToPost(post.id!, post)">
+              <img [src]="post.mediaurl" [alt]="post.caption || 'Post image'" class="post-image" />
+            </div>
+          }
+
+          <!-- ===================================================
+               ENGAGEMENT
+               =================================================== -->
+
+          <div class="engagement-row">
+            <div class="engagement-stat">
+              <span class="heart-icon"> ♡ </span>
+
+              <span>
+                {{ post.cxLikes?.length || 0 }}
+              </span>
+            </div>
+
+            <div class="engagement-stat">
+              <span> 💬 </span>
+
+              <span>
+                {{ post.cxComments?.length || 0 }}
+                {{ post.cxComments?.length === 1 ? 'comment' : 'comments' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- ===================================================
+               ACTIONS
+               =================================================== -->
+
+          <div class="post-actions">
+            <button type="button" class="post-action">
+              <span> ♡ </span>
+
+              Like
+            </button>
+
+            <button type="button" class="post-action" (click)="hidetextarea(post.id!)">
+              <span> 💬 </span>
+
+              Comment
+            </button>
+
+            <button type="button" class="post-action" (click)="goToPost(post.id!, post)">
+              <span> ↗ </span>
+
+              View
+            </button>
+          </div>
+
+          <!-- ===================================================
+               COMMENT INPUT
+               =================================================== -->
+
+          @if (!textareaHidden && activeId === post.id) {
+            <div class="comment-section">
+              <div class="avatar avatar-small">NN</div>
+
+              <div class="comment-input-wrapper">
+                <input
+                  type="text"
+                  [formControl]="comment"
+                  placeholder="Write a comment..."
+                  class="comment-input"
+                  (keyup.enter)="creatComment(post.cxUser?.id || '')"
+                />
+
+                <button
+                  type="button"
+                  class="comment-send"
+                  (click)="creatComment(post.cxUser?.id || '')"
+                >
+                  →
+                </button>
+              </div>
+            </div>
+          }
+        </article>
+      }
+
+      <!-- =======================================================
+           EMPTY STATE
+           ======================================================= -->
+
+      @if (posts().length === 0) {
+        <section class="empty-state">
+          <div class="empty-icon">✦</div>
+
+          <h2>No posts yet</h2>
+
+          <p>
+            Your feed is quiet right now. Be the first person to share something with the community.
+          </p>
+
+          <button type="button" class="empty-action" (click)="displayFeed()">Refresh Feed</button>
+        </section>
+      }
+    </main>
+  </div>
 </div>

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule, DatePipe, NgClass } from '@angular/common';
 import { PostService } from '../../../services/posts/post-service';
-import { Ipost } from '../../../interfaces/ipost';
+import { Ipost, testPosts } from '../../../interfaces/ipost';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CommentService } from '../../../services/comments/comment-service';
 import { Router } from '@angular/router';
@@ -10,14 +10,14 @@ import { UploadFileService } from '../../../services/uploadfile/upload-file-serv
 @Component({
   selector: 'app-feed-component',
   standalone: true,
-  imports: [NgClass, ReactiveFormsModule],
+  imports: [ReactiveFormsModule, DatePipe],
   templateUrl: './feed-component.html',
   styleUrl: './feed-component.css',
 })
 export class FeedComponent implements OnInit {
   textareaHidden = true;
   activeId = '';
-  posts = signal<Ipost[]>([]);
+  posts = signal<Ipost[]>(testPosts);
   commentService = inject(CommentService);
   private postService = inject(PostService);
   router = inject(Router);
@@ -51,7 +51,7 @@ export class FeedComponent implements OnInit {
           mediaUrl: imageUrl(),
         };
         console.log('DATA', data);
-        return this.postService.createPost('cmtwrup870000lrmcaa7syh67', data).subscribe({
+        const responce = this.postService.createPost('cmtwrup870000lrmcaa7syh67', data).subscribe({
           next: (res) => {
             alert('Post Created!');
             console.log('createdPost', res);
@@ -62,6 +62,8 @@ export class FeedComponent implements OnInit {
             alert('Post Not Created!');
           },
         });
+        console.log('RESPONCE', responce);
+        return responce;
       },
 
       error: (e) => console.error(e),
@@ -87,15 +89,16 @@ export class FeedComponent implements OnInit {
     return this.postService.getPosts().subscribe({
       next: (res) => {
         console.log(res);
-        this.posts.set(res?.payload ?? []);
+        this.posts.set(res?.payload ?? testPosts);
       },
     });
   }
-  goToPost(postId: string) {
+  goToPost(postId: string, post: Ipost) {
+    this.commentService.setSelectedPost(post);
     this.router.navigate(['post', postId]);
   }
   ngOnInit(): void {
-    this.displayFeed();
+    // this.displayFeed();
   }
   hidetextarea(activeId: string) {
     this.textareaHidden = !this.textareaHidden;

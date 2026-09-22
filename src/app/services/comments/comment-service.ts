@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Icomment } from '../../interfaces/icomment';
 import { IApiResponce } from '../../interfaces/iapi-responce';
 import { Observable } from 'rxjs';
@@ -14,11 +14,16 @@ export class CommentService {
     body: Icomment,
     params: { userId: string; postId: string },
   ): Observable<IApiResponce<Icomment>> {
-        console.log("Creating comment",params.postId, params.userId)
+    console.log('Creating comment', params.postId, params.userId);
 
     return this.http.post<IApiResponce<Icomment>>(
       `${environment.CORE_URL}/${params.postId}/${params.userId}`,
       body,
     );
+  }
+  selectedPost = signal<Icomment | null>(null);
+
+  setSelectedPost(comment: Icomment) {
+    this.selectedPost.set(comment);
   }
 }
