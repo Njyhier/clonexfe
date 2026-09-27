@@ -1,72 +1,5 @@
-<!-- <div id="conta" class="flex items-center flex-col bg-black">
-  <div class="w-[350px] h-24 mt-2 overflow-hidden mb-1 border rounded-3xl p-2 relative">
-    <form [formGroup]="postForm" (ngSubmit)="registerPost()">
-
-      <textarea formControlName="caption" class="top-0 p-2 left-0 bottom-0 right-0 absolute"></textarea>
-      <button type="submit" class="absolute bottom-2 right-2 bg-blue-300 p-1 rounded-lg">Post</button>
-      <input  (change)="onFileSelected($event)" type="file" name="postImage" id="postImage" class="absolute bottom-2 left-2 bg-slate-500 p-1 w-2/3 rounded-lg">
-    </form>
-  </div>
-  @for (post of posts(); track post.id) {
-    <div class="post max-w-[350px] mb-0.5 border rounded-3xl bg-slate-50 p-2">
-      <div class="auth flex items-center">
-        <div class="w-10 h-10">
-          <img [src]="post.mediaurl" alt="" class="w-10 h-10 rounded-full" />
-        </div>
-        <h1>{{ post?.cxUser?.username }}</h1>
-        <p>@user123</p>
-      </div>
-
-      <div>
-        <p>
-          {{ post.caption }}
-        </p>
-        <img [src]="post.mediaurl" alt="" class="" />
-      </div>
-      <div class="interactions flex mt-3 gap-3">
-        <p>
-          Likes <span class="font-bold">{{ post.cxLikes?.length ?? 0 }}</span>
-        </p>
-        <p>
-          Comments <span class="font-bold">{{ post.cxComments?.length ?? 0 }}</span>
-        </p>
-      </div>
-      @if (post.id == activeId) {
-        <div [ngClass]="{ hidden: textareaHidden }">
-          <form action="">
-            <div class="relative">
-              <textarea
-                name="comment"
-                placeholder="comment..."
-                class="border w-full rounded-2xl p-3"
-                [formControl]="comment"
-              ></textarea>
-              <button class="absolute bottom-3 right-2">Comment</button>
-            </div>
-          </form>
-        </div>
-      }
-      <div class="buttons flex">
-        <ol class="flex items-center justify-around mt-3 w-full">
-          <li><i class="fa-regular fa-comment" (click)="goToPost(post?.id ?? '')"></i></li>
-          <li><i class="fa-solid fa-retweet"></i></li>
-          <li (click)="getPostById(post.id ?? '')">
-            <i class="fa-regular fa-heart"></i>
-          </li>
-          <li><i class="fa-regular fa-bookmark"></i></li>
-          <li><i class="fa-solid fa-upload"></i></li>
-        </ol>
-      </div>
-    </div>
-  }
-</div> -->
-
 <div class="feed-page">
   <div class="feed-container">
-    <!-- =========================================================
-         HEADER
-         ========================================================= -->
-
     <header class="feed-header">
       <div>
         <p class="eyebrow">COMMUNITY</p>
@@ -81,10 +14,6 @@
         Refresh
       </button>
     </header>
-
-    <!-- =========================================================
-         CREATE POST
-         ========================================================= -->
 
     <section class="create-post-card">
       <div class="create-post-top">
@@ -101,34 +30,41 @@
           class="caption-input"
         ></textarea>
 
+        @if (imagePreview()) {
+          <div class="image-preview">
+            <div class="image-preview-header">
+              <span>Image preview</span>
+
+              <button type="button" class="remove-image-btn" (click)="removeSelectedImage()">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <img [src]="imagePreview()!" alt="Selected image preview" class="image-preview-image" />
+          </div>
+        }
+
         <div class="post-form-footer">
           <label class="upload-button">
             <input type="file" accept="image/*" (change)="onFileSelected($event)" />
 
-            <span class="upload-icon"> + </span>
+            <span class="upload-icon">+</span>
 
-            <span> Add photo </span>
+            <span>Add photo</span>
           </label>
 
           <button type="submit" class="publish-btn">
             Publish Post
+
             <span>→</span>
           </button>
         </div>
       </form>
     </section>
 
-    <!-- =========================================================
-         POSTS
-         ========================================================= -->
-
     <main class="feed-list">
       @for (post of posts(); track post.id) {
         <article class="post-card">
-          <!-- ===================================================
-               POST HEADER
-               =================================================== -->
-
           <div class="post-header">
             <div class="post-author">
               <div class="avatar avatar-random">
@@ -145,19 +81,15 @@
                     {{ post.createdAt ? (post.createdAt | date: 'MMM d, y') : 'Recently' }}
                   </span>
 
-                  <span class="dot"> • </span>
+                  <span class="dot">•</span>
 
-                  <span> Public </span>
+                  <span>Public</span>
                 </div>
               </div>
             </div>
 
             <button type="button" class="more-btn" aria-label="More options">⋯</button>
           </div>
-
-          <!-- ===================================================
-               CAPTION
-               =================================================== -->
 
           @if (post.caption) {
             <div class="post-content">
@@ -167,23 +99,15 @@
             </div>
           }
 
-          <!-- ===================================================
-               IMAGE
-               =================================================== -->
-
           @if (post.mediaurl) {
             <div class="post-image-wrapper" (click)="goToPost(post.id!, post)">
               <img [src]="post.mediaurl" [alt]="post.caption || 'Post image'" class="post-image" />
             </div>
           }
 
-          <!-- ===================================================
-               ENGAGEMENT
-               =================================================== -->
-
           <div class="engagement-row">
             <div class="engagement-stat">
-              <span class="heart-icon"> ♡ </span>
+              <span class="heart-icon">♡</span>
 
               <span>
                 {{ post.cxLikes?.length || 0 }}
@@ -191,42 +115,35 @@
             </div>
 
             <div class="engagement-stat">
-              <span> 💬 </span>
+              <span>💬</span>
 
               <span>
                 {{ post.cxComments?.length || 0 }}
+
                 {{ post.cxComments?.length === 1 ? 'comment' : 'comments' }}
               </span>
             </div>
           </div>
 
-          <!-- ===================================================
-               ACTIONS
-               =================================================== -->
-
           <div class="post-actions">
             <button type="button" class="post-action">
-              <span> ♡ </span>
+              <span>♡</span>
 
               Like
             </button>
 
             <button type="button" class="post-action" (click)="hidetextarea(post.id!)">
-              <span> 💬 </span>
+              <span>💬</span>
 
               Comment
             </button>
 
             <button type="button" class="post-action" (click)="goToPost(post.id!, post)">
-              <span> ↗ </span>
+              <i class="fa-regular fa-eye"></i>
 
               View
             </button>
           </div>
-
-          <!-- ===================================================
-               COMMENT INPUT
-               =================================================== -->
 
           @if (!textareaHidden && activeId === post.id) {
             <div class="comment-section">
@@ -254,11 +171,17 @@
         </article>
       }
 
-      <!-- =======================================================
-           EMPTY STATE
-           ======================================================= -->
+      @if (isLoadingMore()) {
+        <div class="feed-loader">
+          <span class="loader-spinner"></span>
 
-      @if (posts().length === 0) {
+          <span>Loading more posts...</span>
+        </div>
+      }
+
+      <div #loadMoreTrigger class="load-more-trigger" aria-hidden="true"></div>
+
+      @if (posts().length === 0 && !isLoadingMore()) {
         <section class="empty-state">
           <div class="empty-icon">✦</div>
 

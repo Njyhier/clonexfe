@@ -159,6 +159,6 @@ export class PostComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // this.getPostById();
+    this.getPostById();
   }
 }

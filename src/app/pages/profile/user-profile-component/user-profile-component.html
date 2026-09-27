@@ -1,0 +1,188 @@
+<div class="min-h-screen bg-slate-50 px-4 py-8">
+  <div class="mx-auto max-w-4xl">
+    <!-- =====================================================
+         PROFILE HEADER
+         ===================================================== -->
+
+    <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+      <!-- Cover -->
+      <div class="h-36 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 sm:h-48"></div>
+
+      <!-- Profile information -->
+      <div class="px-5 pb-6 sm:px-8">
+        <!-- Avatar + Edit -->
+        <div class="-mt-12 flex items-end justify-between sm:-mt-16">
+          <!-- Avatar -->
+          <div
+            class="flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-indigo-100 text-2xl font-black text-indigo-600 shadow-md sm:h-32 sm:w-32 sm:text-4xl"
+          >
+            @if (profile.avatar) {
+              <img
+                [src]="profile.avatar"
+                [alt]="profile.username"
+                class="h-full w-full object-cover"
+              />
+            } @else {
+              {{ profile.username.slice(0, 2).toUpperCase() }}
+            }
+          </div>
+
+          <!-- Edit button -->
+          <button
+            type="button"
+            (click)="editProfile()"
+            class="rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            <i class="fa-solid fa-pen mr-2 text-xs"></i>
+            Edit profile
+          </button>
+        </div>
+
+        <!-- Name -->
+        <div class="mt-4">
+          <h1 class="text-xl font-black text-slate-900">
+            {{ profile.name }}
+          </h1>
+
+          <p class="text-sm text-slate-400">@{{ profile.username }}</p>
+        </div>
+
+        <!-- Bio -->
+        <p class="mt-4 max-w-2xl text-sm leading-6 text-slate-600">
+          {{ profile.bio }}
+        </p>
+
+        <!-- Metadata -->
+        <div class="mt-4 flex flex-wrap gap-4 text-xs text-slate-400">
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-location-dot"></i>
+            {{ profile.location }}
+          </span>
+
+          <span class="flex items-center gap-2">
+            <i class="fa-solid fa-link"></i>
+            {{ profile.website }}
+          </span>
+        </div>
+
+        <!-- Stats -->
+        <div class="mt-6 flex gap-8">
+          <div>
+            <p class="text-lg font-black text-slate-900">
+              {{ posts.length }}
+            </p>
+
+            <p class="text-xs text-slate-400">Posts</p>
+          </div>
+
+          <div>
+            <p class="text-lg font-black text-slate-900">
+              {{ profile.followers }}
+            </p>
+
+            <p class="text-xs text-slate-400">Followers</p>
+          </div>
+
+          <div>
+            <p class="text-lg font-black text-slate-900">
+              {{ profile.following }}
+            </p>
+
+            <p class="text-xs text-slate-400">Following</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         TABS
+         ===================================================== -->
+
+    <div class="mt-6 border-b border-slate-200">
+      <div class="flex">
+        <button
+          type="button"
+          (click)="setTab('posts')"
+          class="relative flex flex-1 items-center justify-center gap-2 py-4 text-sm font-bold transition"
+          [class.text-indigo-600]="activeTab() === 'posts'"
+          [class.text-slate-400]="activeTab() !== 'posts'"
+        >
+          <i class="fa-solid fa-table-cells"></i>
+
+          Posts
+
+          @if (activeTab() === 'posts') {
+            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600"></span>
+          }
+        </button>
+
+        <button
+          type="button"
+          (click)="setTab('liked')"
+          class="relative flex flex-1 items-center justify-center gap-2 py-4 text-sm font-bold transition"
+          [class.text-indigo-600]="activeTab() === 'liked'"
+          [class.text-slate-400]="activeTab() !== 'liked'"
+        >
+          <i class="fa-regular fa-heart"></i>
+
+          Liked
+
+          @if (activeTab() === 'liked') {
+            <span class="absolute bottom-0 left-0 right-0 h-0.5 bg-indigo-600"></span>
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- =====================================================
+         POSTS GRID
+         ===================================================== -->
+
+    @if (activeTab() === 'posts') {
+      <section class="mt-6">
+        <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-4">
+          @for (post of posts; track post.id) {
+            <article class="group relative aspect-square overflow-hidden rounded-2xl bg-slate-200">
+              <img
+                [src]="post.mediaurl"
+                [alt]="post.caption || 'Post'"
+                class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+
+              <!-- Hover overlay -->
+              <div
+                class="absolute inset-0 flex items-center justify-center gap-5 bg-black/0 text-white opacity-0 transition group-hover:bg-black/40 group-hover:opacity-100"
+              >
+                <span class="flex items-center gap-2 text-sm font-bold">
+                  <i class="fa-solid fa-heart"></i>
+                  {{ post.cxLikes?.length ?? 0 }}
+                </span>
+
+                <span class="flex items-center gap-2 text-sm font-bold">
+                  <i class="fa-solid fa-comment"></i>
+                  {{ post.cxComments?.length ?? 0 }}
+                </span>
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+    } @else {
+      <!-- Liked empty state -->
+
+      <div
+        class="mt-6 rounded-3xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center"
+      >
+        <div
+          class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-indigo-50 text-indigo-500"
+        >
+          <i class="fa-regular fa-heart text-xl"></i>
+        </div>
+
+        <h2 class="mt-4 text-sm font-bold text-slate-800">Liked posts</h2>
+
+        <p class="mt-2 text-xs text-slate-400">Posts you like will appear here.</p>
+      </div>
+    }
+  </div>
+</div>
