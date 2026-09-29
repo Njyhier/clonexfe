@@ -244,7 +244,7 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
 
         this.postService.createPost(userId, data).subscribe({
           next: (response) => {
-            console.log('Created post:', response);
+            // console.log('Created post:', response);
 
             if (response.payload) {
               this.posts.update((posts) => [response.payload!, ...posts]);
@@ -309,9 +309,9 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
         },
       )
       .subscribe({
-        next: (res) => console.log(res),
+        next: (res) => res,
 
-        error: (e) => console.log('Error', e),
+        error: (e) => console.error('Error', e),
       });
   }
 
@@ -327,7 +327,7 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   displayFeed() {
-    console.log('getting first 20 posts');
+    // console.log('getting first 20 posts');
 
     this.currentSkip = 0;
     this.hasMorePosts.set(true);
@@ -335,7 +335,7 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
 
     return this.postService.getPosts(0, this.pageSize).subscribe({
       next: (res) => {
-        console.log('First posts:', res);
+        // console.log('First posts:', res);
 
         this.posts.set(res?.payload ?? []);
 
@@ -370,7 +370,7 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.postService.getPosts(this.currentSkip, this.pageSize).subscribe({
       next: (res) => {
-        console.log('More posts:', res);
+        // console.log('More posts:', res);
 
         const newPosts = res?.payload ?? [];
 
@@ -451,7 +451,7 @@ export class FeedComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getPostById(postId: string) {
-    this.postService.getPostById(postId).subscribe((res) => console.log(res));
+    this.postService.getPostById(postId).subscribe((res) => res);
   }
 
   @HostListener('document:click', ['$event'])

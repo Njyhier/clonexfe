@@ -40,11 +40,11 @@ export class PostComponent implements OnInit {
 
     this.activatedRoute.params.subscribe((params) => (postId = params['id']));
 
-    console.log(postId);
+    // console.log(postId);
 
     this.postService.getPostById(postId).subscribe({
       next: (res) => {
-        console.log(res);
+        // console.log(res);
 
         this.requestedPost.set(res?.payload ?? null);
       },
@@ -68,7 +68,7 @@ export class PostComponent implements OnInit {
   }
 
   creatComment() {
-    console.log('Creating comment');
+    // console.log('Creating comment');
 
     const comment = this.comment?.value?.trim() ?? '';
 
@@ -96,7 +96,7 @@ export class PostComponent implements OnInit {
       )
       .subscribe({
         next: (res) => {
-          console.log(res);
+          // console.log(res);
 
           this.comment.reset();
 
@@ -104,23 +104,23 @@ export class PostComponent implements OnInit {
         },
 
         error: (e) => {
-          console.log('Error', e);
+          console.error('Error', e);
         },
       });
   }
 
-  createLike() {
-    const postId = this.requestedPost()?.id ?? '';
+  // createLike() {
+  //   const postId = this.requestedPost()?.id ?? '';
 
-    const userId = this.authService.currentUser()?.id;
+  //   const userId = this.authService.currentUser()?.id;
 
-    const body = {
-      postId: postId,
-      userId: userId,
-    };
+  //   const body = {
+  //     postId: postId,
+  //     userId: userId,
+  //   };
 
-    this.likeService.createLike(body).subscribe((res) => console.log(res));
-  }
+  //   this.likeService.createLike(body).subscribe((res) => console.log(res));
+  // }
 
   toggleLike(post: Ipost) {
     const userId = this.authService.currentUser()?.id;
@@ -132,7 +132,6 @@ export class PostComponent implements OnInit {
     const existingLike = this.likeService.getUserLike(post.cxLikes ?? [], userId ?? '');
 
     if (existingLike) {
-      console.log('removing');
       this.likeService.unlikePost(existingLike.id).subscribe({
         next: () => {
           post.cxLikes = post.cxLikes?.filter((like) => like.id !== existingLike.id);
