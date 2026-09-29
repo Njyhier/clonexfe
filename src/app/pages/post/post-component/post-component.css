@@ -35,3 +35,99 @@
 .like-action:hover {
   color: #ef4444;
 }
+
+.post-comment-input-wrapper {
+  position: relative;
+}
+
+.post-comment-emoji-button {
+  position: absolute;
+  right: 78px;
+  bottom: 7px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: transparent;
+  color: #94a3b8;
+
+  font-size: 17px;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.post-comment-emoji-button:hover {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.post-comment-emoji-picker {
+  position: absolute;
+  z-index: 1000;
+
+  right: 0;
+  bottom: calc(100% + 8px);
+
+  width: 352px;
+
+  overflow: hidden;
+
+  border-radius: 12px;
+
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.14),
+    0 4px 10px rgba(15, 23, 42, 0.06);
+}
+
+.post-comment-input-wrapper {
+  position: relative;
+}
+
+.post-comment-emoji-button {
+  position: absolute;
+  right: 78px;
+  bottom: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 17px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.post-comment-emoji-button:hover {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.post-comment-emoji-picker {
+  position: absolute;
+  z-index: 1000;
+  right: 0;
+  bottom: calc(100% + 8px);
+  width: 352px;
+  overflow: hidden;
+  border-radius: 12px;
+  box-shadow:
+    0 12px 30px rgba(15, 23, 42, 0.14),
+    0 4px 10px rgba(15, 23, 42, 0.06);
+}

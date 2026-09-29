@@ -33,7 +33,10 @@ export class PostService {
     return this.http.get<IApiResponce<Ipost>>(`${environment.CORE_URL}/posts/${postId}`);
   }
 
-  createPost(user_id: string, data: Ipost): Observable<Ipost> {
-    return this.http.post<Ipost>(`${environment.CORE_URL}/posts/users/${user_id}/posts`, data);
+  createPost(user_id: string, data: Ipost): Observable<IApiResponce<Ipost>> {
+    return this.http.post<IApiResponce<Ipost>>(
+      `${environment.CORE_URL}/posts/users/${user_id}/posts`,
+      data,
+    );
   }
 }

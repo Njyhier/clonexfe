@@ -1,18 +1,23 @@
-<div class="feed-page">
+<!-- <div class="feed-page">
   <div class="feed-container">
     <header class="feed-header">
       <div>
         <p class="eyebrow">COMMUNITY</p>
-
         <h1>Your Feed</h1>
-
         <p class="feed-subtitle">Discover what people are sharing today.</p>
       </div>
 
-      <button type="button" class="refresh-btn" (click)="displayFeed()">
-        <span>↻</span>
-        Refresh
-      </button>
+      <div class="feed-header-actions">
+        <button type="button" class="login-btn" (click)="router.navigate(['/login'])">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Login
+        </button>
+
+        <button type="button" class="refresh-btn" (click)="displayFeed()">
+          <span>↻</span>
+          Refresh
+        </button>
+      </div>
     </header>
 
     <section class="create-post-card">
@@ -23,24 +28,120 @@
       </div>
 
       <form [formGroup]="postForm" (ngSubmit)="registerPost()" class="post-form">
-        <textarea
-          formControlName="caption"
-          rows="3"
-          placeholder="What's on your mind?"
-          class="caption-input"
-        ></textarea>
+        <div class="caption-input-wrapper">
+          <textarea
+            formControlName="caption"
+            rows="3"
+            placeholder="What's on your mind?"
+            class="caption-input"
+          ></textarea>
 
-        @if (imagePreview()) {
-          <div class="image-preview">
-            <div class="image-preview-header">
-              <span>Image preview</span>
+          <button
+            type="button"
+            class="caption-emoji-button"
+            aria-label="Add emoji"
+            (click)="toggleCaptionEmojiPicker()"
+          >
+            <i class="fa-regular fa-face-smile"></i>
+          </button>
 
-              <button type="button" class="remove-image-btn" (click)="removeSelectedImage()">
+          @if (showCaptionEmojiPicker()) {
+            <div class="caption-emoji-picker">
+              <emoji-mart
+                [isNative]="true"
+                [enableSearch]="true"
+                [showPreview]="true"
+                [perLine]="8"
+                (emojiClick)="addCaptionEmoji($event)"
+              ></emoji-mart>
+            </div>
+          }
+        </div>
+        @if (showCropper()) {
+          <div class="cropper-container">
+            <div class="cropper-header">
+              <div>
+                <h3>Crop your image</h3>
+                <p>Drag the corners to select the area you want.</p>
+              </div>
+
+              <button type="button" class="cropper-close-btn" (click)="removeSelectedImage()">
                 <i class="fa-solid fa-xmark"></i>
               </button>
             </div>
 
-            <img [src]="imagePreview()!" alt="Selected image preview" class="image-preview-image" />
+            <div class="cropper-wrapper">
+              <image-cropper
+                [imageFile]="postForm.value.image ?? undefined"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="1 / 1"
+                [resizeToWidth]="1000"
+                format="jpeg"
+                output="blob"
+                (imageCropped)="imageCropped($event)"
+              ></image-cropper>
+            </div>
+
+            <div class="cropper-actions">
+              <button type="button" class="cropper-cancel-btn" (click)="removeSelectedImage()">
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                class="cropper-apply-btn"
+                (click)="applyCrop()"
+                [disabled]="!croppedImage()"
+              >
+                <i class="fa-solid fa-check"></i>
+                Apply Crop
+              </button>
+            </div>
+          </div>
+        }
+        @if (imagePreview() && !showCropper()) {
+          <div class="image-preview">
+            <div class="image-preview-header">
+              <span>Image preview</span>
+
+              <div class="image-preview-actions">
+                <button type="button" class="crop-image-btn" (click)="openCropper()">
+                  <i class="fa-solid fa-crop-simple"></i>
+                  Crop
+                </button>
+
+                <button
+                  type="button"
+                  class="remove-image-btn"
+                  (click)="removeSelectedImage()"
+                  aria-label="Remove selected image"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="image-preview-image-wrapper">
+              <img
+                [src]="imagePreview()!"
+                alt="Selected image preview"
+                class="image-preview-image"
+              />
+            </div>
+          </div>
+        }
+
+        @if (postSuccess()) {
+          <div class="post-message post-message-success">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>{{ postSuccess() }}</span>
+          </div>
+        }
+
+        @if (postError()) {
+          <div class="post-message post-message-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>{{ postError() }}</span>
           </div>
         }
 
@@ -49,14 +150,17 @@
             <input type="file" accept="image/*" (change)="onFileSelected($event)" />
 
             <span class="upload-icon">+</span>
-
             <span>Add photo</span>
           </label>
 
-          <button type="submit" class="publish-btn">
-            Publish Post
-
-            <span>→</span>
+          <button type="submit" class="publish-btn" [disabled]="isCreatingPost()">
+            @if (isCreatingPost()) {
+              <span class="loader-spinner"></span>
+              Publishing...
+            } @else {
+              Publish Post
+              <span>→</span>
+            }
           </button>
         </div>
       </form>
@@ -68,12 +172,12 @@
           <div class="post-header">
             <div class="post-author">
               <div class="avatar avatar-random">
-                {{ post.cxUser?.username?.slice(0, 2)?.toUpperCase() || 'US' }}
+                {{ post.cxUser?.cxusername?.slice(0, 2)?.toUpperCase() || 'US' }}
               </div>
 
               <div class="author-info">
                 <h3>
-                  {{ post.cxUser?.username || 'Community Member' }}
+                  {{ post.cxUser?.cxusername! }}
                 </h3>
 
                 <div class="post-meta">
@@ -160,11 +264,359 @@
 
                 <button
                   type="button"
+                  class="comment-emoji-button"
+                  aria-label="Add emoji"
+                  (click)="toggleCommentEmojiPicker()"
+                >
+                  <i class="fa-regular fa-face-smile"></i>
+                </button>
+
+                <button
+                  type="button"
                   class="comment-send"
                   (click)="creatComment(post.cxUser?.id || '')"
                 >
                   →
                 </button>
+
+                @if (showCommentEmojiPicker()) {
+                  <div class="comment-emoji-picker">
+                    <emoji-mart
+                      [isNative]="true"
+                      [enableSearch]="true"
+                      [showPreview]="true"
+                      [perLine]="8"
+                      (emojiClick)="addCommentEmoji($event)"
+                    ></emoji-mart>
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </article>
+      }
+
+      @if (isLoadingMore()) {
+        <div class="feed-loader">
+          <span class="loader-spinner"></span>
+
+          <span>Loading more posts...</span>
+        </div>
+      }
+
+      <div #loadMoreTrigger class="load-more-trigger" aria-hidden="true"></div>
+
+      @if (posts().length === 0 && !isLoadingMore()) {
+        <section class="empty-state">
+          <div class="empty-icon">✦</div>
+
+          <h2>No posts yet</h2>
+
+          <p>
+            Your feed is quiet right now. Be the first person to share something with the community.
+          </p>
+
+          <button type="button" class="empty-action" (click)="displayFeed()">Refresh Feed</button>
+        </section>
+      }
+    </main>
+  </div>
+</div> -->
+
+<div class="feed-page">
+  <div class="feed-container">
+    <header class="feed-header">
+      <div>
+        <p class="eyebrow">COMMUNITY</p>
+        <h1>Your Feed</h1>
+        <p class="feed-subtitle">Discover what people are sharing today.</p>
+      </div>
+
+      <div class="feed-header-actions">
+        <button type="button" class="login-btn" (click)="router.navigate(['/login'])">
+          <i class="fa-solid fa-right-to-bracket"></i>
+          Login
+        </button>
+
+        <button type="button" class="refresh-btn" (click)="displayFeed()">
+          <span>↻</span>
+          Refresh
+        </button>
+      </div>
+    </header>
+
+    <section class="create-post-card">
+      <div class="create-post-top">
+        <div class="avatar avatar-primary">NN</div>
+
+        <div class="create-post-placeholder">Share something with the community...</div>
+      </div>
+
+      <form [formGroup]="postForm" (ngSubmit)="registerPost()" class="post-form">
+        <div class="caption-input-wrapper">
+          <textarea
+            formControlName="caption"
+            rows="3"
+            placeholder="What's on your mind?"
+            class="caption-input"
+          ></textarea>
+
+          <button
+            type="button"
+            class="caption-emoji-button"
+            aria-label="Add emoji"
+            (click)="toggleCaptionEmojiPicker()"
+          >
+            <i class="fa-regular fa-face-smile"></i>
+          </button>
+
+          @if (showCaptionEmojiPicker()) {
+            <div class="caption-emoji-picker">
+              <emoji-mart
+                [isNative]="true"
+                [enableSearch]="true"
+                [showPreview]="true"
+                [perLine]="8"
+                (emojiClick)="addCaptionEmoji($event)"
+              ></emoji-mart>
+            </div>
+          }
+        </div>
+
+        @if (showCropper()) {
+          <div class="cropper-container">
+            <div class="cropper-header">
+              <div>
+                <h3>Crop your image</h3>
+                <p>Drag the corners to select the area you want.</p>
+              </div>
+
+              <button type="button" class="cropper-close-btn" (click)="removeSelectedImage()">
+                <i class="fa-solid fa-xmark"></i>
+              </button>
+            </div>
+
+            <div class="cropper-wrapper">
+              <image-cropper
+                [imageFile]="postForm.value.image ?? undefined"
+                [maintainAspectRatio]="true"
+                [aspectRatio]="1 / 1"
+                [resizeToWidth]="1000"
+                format="jpeg"
+                output="blob"
+                (imageCropped)="imageCropped($event)"
+              ></image-cropper>
+            </div>
+
+            <div class="cropper-actions">
+              <button type="button" class="cropper-cancel-btn" (click)="removeSelectedImage()">
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                class="cropper-apply-btn"
+                (click)="applyCrop()"
+                [disabled]="!croppedImage()"
+              >
+                <i class="fa-solid fa-check"></i>
+                Apply Crop
+              </button>
+            </div>
+          </div>
+        }
+
+        @if (imagePreview() && !showCropper()) {
+          <div class="image-preview">
+            <div class="image-preview-header">
+              <span>Image preview</span>
+
+              <div class="image-preview-actions">
+                <button type="button" class="crop-image-btn" (click)="openCropper()">
+                  <i class="fa-solid fa-crop-simple"></i>
+                  Crop
+                </button>
+
+                <button
+                  type="button"
+                  class="remove-image-btn"
+                  (click)="removeSelectedImage()"
+                  aria-label="Remove selected image"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="image-preview-image-wrapper">
+              <img
+                [src]="imagePreview()!"
+                alt="Selected image preview"
+                class="image-preview-image"
+              />
+            </div>
+          </div>
+        }
+
+        @if (postSuccess()) {
+          <div class="post-message post-message-success">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>{{ postSuccess() }}</span>
+          </div>
+        }
+
+        @if (postError()) {
+          <div class="post-message post-message-error">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <span>{{ postError() }}</span>
+          </div>
+        }
+
+        <div class="post-form-footer">
+          <label class="upload-button">
+            <input type="file" accept="image/*" (change)="onFileSelected($event)" />
+
+            <span class="upload-icon">+</span>
+            <span>Add photo</span>
+          </label>
+
+          <button type="submit" class="publish-btn" [disabled]="isCreatingPost()">
+            @if (isCreatingPost()) {
+              <span class="loader-spinner"></span>
+              Publishing...
+            } @else {
+              Publish Post
+              <span>→</span>
+            }
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <main class="feed-list">
+      @for (post of posts(); track post.id) {
+        <article class="post-card">
+          <div class="post-header">
+            <div class="post-author">
+              <div class="avatar avatar-random">
+                {{ post.cxUser?.cxusername?.slice(0, 2)?.toUpperCase() || 'US' }}
+              </div>
+
+              <div class="author-info">
+                <h3>
+                  {{ post.cxUser?.cxusername! }}
+                </h3>
+
+                <div class="post-meta">
+                  <span>
+                    {{ post.createdAt ? (post.createdAt | date: 'MMM d, y') : 'Recently' }}
+                  </span>
+
+                  <span class="dot">•</span>
+
+                  <span>Public</span>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" class="more-btn" aria-label="More options">⋯</button>
+          </div>
+
+          @if (post.caption) {
+            <div class="post-content">
+              <p>
+                {{ post.caption }}
+              </p>
+            </div>
+          }
+
+          @if (post.mediaurl) {
+            <div class="post-image-wrapper" (click)="goToPost(post.id!, post)">
+              <img [src]="post.mediaurl" [alt]="post.caption || 'Post image'" class="post-image" />
+            </div>
+          }
+
+          <div class="engagement-row">
+            <div class="engagement-stat">
+              <span class="heart-icon">♡</span>
+
+              <span>
+                {{ post.cxLikes?.length || 0 }}
+              </span>
+            </div>
+
+            <div class="engagement-stat">
+              <span>💬</span>
+
+              <span>
+                {{ post.cxComments?.length || 0 }}
+
+                {{ post.cxComments?.length === 1 ? 'comment' : 'comments' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="post-actions">
+            <button (click)="toggleLike(post)">
+              <i
+                [class.fa-solid]="userHasLiked(post)"
+                [class.fa-regular]="!userHasLiked(post)"
+                class="fa-heart"
+              ></i>
+
+              Like
+            </button>
+
+            <button type="button" class="post-action" (click)="hidetextarea(post.id!)">
+              <span>💬</span>
+
+              Comment
+            </button>
+
+            <button type="button" class="post-action" (click)="goToPost(post.id!, post)">
+              <i class="fa-regular fa-eye"></i>
+
+              View
+            </button>
+          </div>
+
+          @if (!textareaHidden && activeId === post.id) {
+            <div class="comment-section">
+              <div class="avatar avatar-small">NN</div>
+
+              <div class="comment-area-wrapper">
+                <div class="comment-input-wrapper">
+                  <input
+                    type="text"
+                    [formControl]="comment"
+                    placeholder="Write a comment..."
+                    class="comment-input"
+                    (keyup.enter)="creatComment()"
+                  />
+
+                  <button
+                    type="button"
+                    class="comment-emoji-button"
+                    aria-label="Add emoji"
+                    (click)="toggleCommentEmojiPicker()"
+                  >
+                    <i class="fa-regular fa-face-smile"></i>
+                  </button>
+
+                  <button type="button" class="comment-send" (click)="creatComment()">→</button>
+                </div>
+
+                @if (showCommentEmojiPicker()) {
+                  <div class="comment-emoji-picker">
+                    <emoji-mart
+                      [isNative]="true"
+                      [enableSearch]="true"
+                      [showPreview]="true"
+                      [perLine]="8"
+                      (emojiClick)="addCommentEmoji($event)"
+                    ></emoji-mart>
+                  </div>
+                }
               </div>
             </div>
           }

@@ -17,7 +17,7 @@ export class CommentService {
     console.log('Creating comment', params.postId, params.userId);
 
     return this.http.post<IApiResponce<Icomment>>(
-      `${environment.CORE_URL}/${params.postId}/${params.userId}`,
+      `${environment.CORE_URL}/comments/createcomment/${params.postId}/${params.userId}`,
       body,
     );
   }
